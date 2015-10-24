@@ -16,5 +16,9 @@ This project provides a proof-of-concept for a resilient resource provider archi
   - [**API Gateway**](http://microservices.io/patterns/apigateway.html): the client application does not query the external service directly, but using an API Gateway in its own (application and runtime) domain
   - [**Circuit Breakers**](http://martinfowler.com/bliki/CircuitBreaker.html): the implementation of Circuit Breakers effectively allows the API Gateways to serve as Bulkheads. The API Gateways monitor if requests to the external service fail. If they do so continuously (e.g. the failure rate is over a given threshold), the Circuit Breaker is *opened* so that consecutive calls from the client application fail immediately. This allows the client application to remain responsive.
 
+### Architecture Map
+
+![Architecture Map](https://raw.githubusercontent.com/Shark/resilient-resource-provider/master/docs/architecture/architecture_map.png)
+
 ## License
 This project is licensed under the Apache 2.0 License. See LICENSE for details.
