@@ -1,0 +1,27 @@
+!!! 5
+%html
+  %head
+    %title= "Calculator Application"
+    %link{ :href => "style.css", :media => "screen", :rel => "stylesheet" }
+  %body
+    %h1 Calculator Application
+    %form{method: 'post'}
+      %p
+        Probability that requests fail:
+        %select{name: 'fail_chance'}
+          - (0.0..1.0).step(0.1) do |step|
+            - rounded_step = step.round(1)
+            - if rounded_step == config.fail_chance
+              %option{selected: true}= step.round(1)
+            - else
+              %option= step.round(1)
+      %p
+        Requests fail after a timeout of:
+        %select{name: 'fail_timeout'}
+          - (0..15).each do |step|
+            - if step == config.fail_timeout
+              %option{value: step, selected: true}= "#{step}s"
+            - else
+              %option{value: step}= "#{step}s"
+      %button{type: 'submit'}
+        Save
