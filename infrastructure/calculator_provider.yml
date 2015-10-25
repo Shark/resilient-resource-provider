@@ -1,0 +1,6 @@
+calculator_provider:
+  image: sh4rk/rrp_calculator_provider
+  ports:
+    - 4567
+  environment:
+    - SERVICE_NAME=calculator_provider

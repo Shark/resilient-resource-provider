@@ -1,0 +1,25 @@
+consul:
+  image: sh4rk/consul
+  ports:
+    - "8400:8400"
+    - "8500:8500"
+    - "53:8600/udp"
+  volumes:
+    - /srv/consul:/data
+  container_name: consul
+  hostname: rrp
+  command: agent -server -bootstrap -ui-dir /app/web-ui -data-dir /data -client 0.0.0.0
+registrator:
+  image: gliderlabs/registrator
+  container_name: registrator
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+  command: -ip 172.17.42.1 consul://172.17.42.1:8500
+calculator:
+  image: sh4rk/rrp_calculator
+  ports:
+    - 8080:4567
+  environment:
+    - SERVICE_NAME=calculator
+    - SERVICE_CHECK_HTTP=/
+    - SERVICE_CHECK_INTERVAL=10s
