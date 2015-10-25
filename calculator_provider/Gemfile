@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'sinatra', '~> 1.4.6'
 gem 'httparty', '~> 0.13.7'
+gem 'diplomat', '~> 0.14.0'
 
 group :development do
   gem 'pry', '~> 0.10.3'

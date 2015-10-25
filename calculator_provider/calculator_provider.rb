@@ -5,6 +5,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'sinatra'
 require 'httparty'
+require 'diplomat'
 
 begin
   require 'pry'
@@ -23,6 +24,10 @@ end
 config = OpenStruct.new(calculator_host: calculator_host,
                         calculator_port: calculator_port,
                         calculator_timeout: ENV['CALCULATOR_TIMEOUT'] || 2)
+
+Diplomat.configure do |config|
+  config.url = ENV['CONSUL_HTTP_URL'] || (raise 'I need a consul http url!')
+end
 
 circuit_breaker = CircuitBreaker.new(failure_threshold: ENV['FAILURE_THRESHOLD'],
                                      reset_timeout: ENV['RESET_TIMEOUT'])
@@ -72,6 +77,8 @@ get '/add' do
 end
 
 get '/health' do
+  circuit_breaker.update
+
   case circuit_breaker.state
   when :closed
     status 200
