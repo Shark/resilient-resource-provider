@@ -11,6 +11,8 @@ begin
 rescue LoadError
 end
 
+require_relative 'lib/circuit_breaker'
+
 if (host = ENV['CALCULATOR_HOST']) && (port = ENV['CALCULATOR_PORT'])
   calculator_host = host
   calculator_port = port
@@ -22,11 +24,16 @@ config = OpenStruct.new(calculator_host: calculator_host,
                         calculator_port: calculator_port,
                         calculator_timeout: ENV['CALCULATOR_TIMEOUT'] || 2)
 
+circuit_breaker = CircuitBreaker.new(failure_threshold: ENV['FAILURE_THRESHOLD'],
+                                     reset_timeout: ENV['RESET_TIMEOUT'])
+
 get '/' do
   'Calculator Provider'
 end
 
 get '/add' do
+  return 502 if circuit_breaker.fail_immediately?
+
   begin
     x = Float(params.fetch('x'))
     y = Float(params.fetch('y'))
@@ -34,22 +41,32 @@ get '/add' do
     return 400
   end
 
-  begin
-    calculator_response = HTTParty.get("http://#{config.calculator_host}:#{config.calculator_port}/add?x=#{x}&y=#{y}",
-                                       timeout: config.calculator_timeout)
+  result = nil
 
-    if calculator_response.code == 200
-      add_result = JSON.parse(calculator_response.body)['result']
-      response = { result: add_result }
-      JSON.dump(response)
-    else
-      calculator_response.code
+  circuit_breaker.operate do
+    begin
+      calculator_response = HTTParty.get("http://#{config.calculator_host}:#{config.calculator_port}/add?x=#{x}&y=#{y}",
+                                         timeout: config.calculator_timeout)
+
+      if calculator_response.code == 200
+        add_result = JSON.parse(calculator_response.body)['result']
+        response = { result: add_result }
+        result = JSON.dump(response)
+      else
+        result = calculator_response.code
+        raise calculator_resposne.code
+      end
+    rescue HTTParty::Error => e
+      result = 502
+      raise e
+    rescue Errno::ECONNREFUSED => e
+      result = 503
+      raise e
+    rescue Net::ReadTimeout => e
+      result = 504
+      raise e
     end
-  rescue HTTParty::Error
-    502
-  rescue Errno::ECONNREFUSED
-    503
-  rescue Net::ReadTimeout
-    504
   end
+
+  return result
 end
