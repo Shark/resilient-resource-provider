@@ -1,0 +1,10 @@
+calculator_provider:
+  circuit_breaker:
+    failure_count: 0
+    last_failed: ''
+  config:
+    CALCULATOR_HOST: 172.17.42.1
+    CALCULATOR_PORT: 8081
+    CONSUL_HTTP_URL: http://172.17.42.1:8500
+    FAILURE_THRESHOLD: 3
+    RESET_TIMEOUT: 5
