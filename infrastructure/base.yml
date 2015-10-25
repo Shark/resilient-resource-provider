@@ -23,3 +23,12 @@ calculator:
     - SERVICE_NAME=calculator
     - SERVICE_CHECK_HTTP=/
     - SERVICE_CHECK_INTERVAL=10s
+app:
+  image: sh4rk/rrp_app
+  ports:
+    - 80:4567
+  dns: 172.17.42.1
+  environment:
+    - SERVICE_NAME=app
+    - SERVICE_CHECK_HTTP=/
+    - SERVICE_CHECK_INTERVAL=10s

@@ -1,0 +1,20 @@
+!!! 5
+%html
+  %head
+    %title= "Calculator Application"
+    %link{ :href => "style.css", :media => "screen", :rel => "stylesheet" }
+  %body
+    %h1 Client Application
+    %form{method: 'post'}
+      %input{type: 'text', name: 'x', size: 4, value: 1}
+      +
+      %input{type: 'text', name: 'y', size: 4, value: 1}
+      %button{type: 'submit'}
+        calculate
+    - if defined?(result)
+      %p
+        = "Got result: #{result}"
+    - if defined?(debug)
+      %p
+        - debug.each do |message|
+          = "#{message}<br/>"
