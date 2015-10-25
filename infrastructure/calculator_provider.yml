@@ -4,3 +4,5 @@ calculator_provider:
     - 4567
   environment:
     - SERVICE_NAME=calculator_provider
+    - SERVICE_CHECK_HTTP=/health
+    - SERVICE_CHECK_INTERVAL=3s

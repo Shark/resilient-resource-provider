@@ -70,3 +70,16 @@ get '/add' do
 
   return result
 end
+
+get '/health' do
+  case circuit_breaker.state
+  when :closed
+    status 200
+  when :half_open, :open
+    status 429
+  end
+
+  JSON.dump(state: circuit_breaker.state,
+            failure_count: circuit_breaker.failure_count,
+            last_failed: circuit_breaker.last_failed)
+end
