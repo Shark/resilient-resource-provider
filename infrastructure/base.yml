@@ -8,7 +8,7 @@ consul:
     - /srv/consul:/data
   container_name: consul
   hostname: rrp
-  command: agent -server -bootstrap -ui-dir /app/web-ui -data-dir /data -client 0.0.0.0
+  command: agent -server -bootstrap -ui-dir /app/web-ui -data-dir /data -client 0.0.0.0 -advertise 172.17.42.1
 registrator:
   image: gliderlabs/registrator
   container_name: registrator
